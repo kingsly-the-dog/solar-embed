@@ -9,23 +9,53 @@
   Don't edit below unless you know why. -->
 <style>
 html,body{margin:0!important;padding:0!important;background:transparent!important}
-#slw{--brand:#023831;--accent:#58ab54;font-family:var(--fb,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif);color:#14231E;max-width:1100px;margin:0 auto;padding:4px 2px 8px;box-sizing:border-box}
+#slw{--brand:#023831;--accent:#58ab54;font-family:var(--fb,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif);color:#14231E;max-width:1140px;margin:0 auto;padding:10px 16px 28px;box-sizing:border-box}
 #slw *{box-sizing:border-box}
 #slw .slw-load{padding:40px 0;text-align:center;color:#6B7A74;font-size:15px}
-#slw .slw-head{text-align:center;margin:0 0 18px}
-#slw .slw-head h2{font-family:var(--fh,inherit);font-size:clamp(22px,3.2vw,30px);line-height:1.2;margin:0 0 6px;color:var(--brand)}
-#slw .slw-head p{margin:0;color:#3E4C47;font-size:16px}
-#slw .slw-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:760px){#slw .slw-cards{grid-template-columns:1fr}}
-#slw .slw-card{all:unset;box-sizing:border-box;cursor:pointer;display:flex;flex-direction:column;gap:8px;background:#fff;border:1.5px solid #E2E8E4;border-radius:16px;padding:20px;transition:border-color .15s,box-shadow .15s,transform .15s;font-family:inherit}
-#slw .slw-card:hover,#slw .slw-card:focus-visible{border-color:var(--accent);box-shadow:0 6px 22px rgba(0,0,0,.08);transform:translateY(-2px)}
-#slw .slw-card:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-#slw .slw-ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--brand) 9%,#fff);color:var(--brand)}
-#slw .slw-ico svg{width:24px;height:24px}
-#slw .slw-card h3{font-family:var(--fh,inherit);margin:4px 0 0;font-size:19px;line-height:1.25;color:#14231E}
-#slw .slw-card p{margin:0;font-size:14.5px;line-height:1.45;color:#3E4C47}
-#slw .slw-meta{font-size:13px;color:#6B7A74}
-#slw .slw-go{margin-top:auto;padding-top:6px;font-weight:700;color:var(--brand);font-size:15px}
+#slw .slw-head{text-align:center;margin:0 auto 26px;max-width:640px}
+#slw .slw-eb{display:inline-block;font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--brand);background:color-mix(in srgb,var(--accent) 18%,#fff);padding:6px 12px;border-radius:999px;margin-bottom:12px}
+#slw .slw-head h2{font-family:var(--fh,inherit);font-size:clamp(26px,3.6vw,38px);font-weight:800;letter-spacing:-.02em;line-height:1.15;margin:0 0 10px;color:#111}
+#slw .slw-head p{margin:0;color:#4B5563;font-size:17px;line-height:1.5}
+#slw .slw-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+#slw .slw-card{all:unset;box-sizing:border-box;cursor:pointer;background:#fff;border-radius:22px;padding:0 0 22px;display:flex;flex-direction:column;position:relative;overflow:hidden;color:#111;box-shadow:0 1px 2px rgba(0,0,0,.06),0 14px 40px rgba(0,0,0,.10);border:1px solid rgba(0,0,0,.06);transition:transform .25s ease,box-shadow .25s ease;font-family:inherit}
+#slw .slw-card:hover{transform:translateY(-6px);box-shadow:0 2px 4px rgba(0,0,0,.06),0 26px 60px rgba(0,0,0,.16)}
+#slw .slw-card:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+#slw .slw-prev{display:block;height:178px;position:relative;padding:20px;background:linear-gradient(135deg,color-mix(in srgb,var(--brand) 8%,#fff),color-mix(in srgb,var(--brand) 18%,#fff))}
+#slw .slw-card:nth-child(2) .slw-prev{background:linear-gradient(135deg,color-mix(in srgb,var(--accent) 12%,#fff),color-mix(in srgb,var(--accent) 28%,#fff))}
+#slw .slw-card:nth-child(3) .slw-prev{background:linear-gradient(135deg,#FFF4DE,#FFE4B5)}
+#slw .slw-tag{position:absolute;top:16px;left:20px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;color:#111;background:rgba(255,255,255,.8);padding:5px 10px;border-radius:999px}
+#slw .slw-tag svg{width:16px;height:16px;color:var(--brand)}
+#slw .slw-num{position:absolute;top:16px;right:18px;font-size:12px;font-weight:800;color:rgba(0,0,0,.35)}
+#slw .slw-mini{position:absolute;left:20px;right:20px;bottom:-14px;background:#fff;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.12);padding:14px 16px 16px;transition:transform .25s ease}
+#slw .slw-card:hover .slw-mini{transform:translateY(-6px)}
+#slw .slw-mk{display:block;font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#6B7280}
+#slw .slw-mv{display:block;font-family:var(--fh,inherit);font-size:25px;font-weight:800;letter-spacing:-.02em;line-height:1.15;margin:4px 0 2px;color:#111}
+#slw .slw-ms{display:block;font-size:13px;color:#6B7280}
+#slw .slw-pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--accent) 16%,#fff);color:color-mix(in srgb,var(--accent) 70%,#000)}
+#slw .slw-bars{display:flex;align-items:flex-end;gap:6px;height:30px;margin-top:8px}
+#slw .slw-bars i{flex:1;border-radius:4px 4px 0 0;background:var(--accent)}
+#slw .slw-batt{display:flex;align-items:center;gap:8px;margin-top:8px}
+#slw .slw-batt b{flex:1;height:16px;border-radius:5px;border:2px solid #111;position:relative;overflow:hidden}
+#slw .slw-batt b:after{content:"";position:absolute;inset:2px auto 2px 2px;width:72%;border-radius:2px;background:#F59E0B}
+#slw .slw-batt span{font-size:13px;font-weight:700}
+#slw .slw-body{display:flex;flex-direction:column;gap:8px;padding:32px 22px 0;flex:1}
+#slw .slw-card h3{font-family:var(--fh,inherit);font-size:21px;font-weight:800;letter-spacing:-.01em;line-height:1.25;margin:0;color:#111}
+#slw .slw-for{font-size:13px;font-weight:700;color:color-mix(in srgb,var(--accent) 70%,#000);margin:0}
+#slw .slw-card p{font-size:15px;line-height:1.5;color:#4B5563;margin:0}
+#slw .slw-meta{display:flex;gap:14px;font-size:13px;color:#6B7280;font-weight:600;margin-top:2px}
+#slw .slw-go{margin:16px 22px 0;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--brand);color:#fff;font-weight:700;font-size:16px;border-radius:12px;padding:14px 18px;transition:filter .2s}
+#slw .slw-card:hover .slw-go{filter:brightness(1.15)}
+@media(max-width:760px){
+ #slw .slw-cards{grid-template-columns:1fr;gap:12px}
+ #slw .slw-card{flex-direction:row;align-items:center;padding:14px 14px 14px 16px;border-radius:16px;gap:12px}
+ #slw .slw-card:hover{transform:none}
+ #slw .slw-prev,#slw .slw-meta,#slw .slw-card p.slw-desc{display:none}
+ #slw .slw-body{padding:0;min-width:0;display:block}
+ #slw .slw-card h3{font-size:17px}
+ #slw .slw-for{margin-top:2px}
+ #slw .slw-go{margin:0;flex:none;padding:10px 14px;font-size:14px;white-space:nowrap}
+ #slw .slw-head h2{font-size:26px}
+}
 #slw .slw-top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px}
 #slw .slw-back{all:unset;cursor:pointer;font:600 15px/1.2 inherit;font-family:inherit;color:var(--brand);padding:8px 4px}
 #slw .slw-back:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:6px}
@@ -629,9 +659,9 @@ render();
     battery: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10.5v3"/><path d="M11.5 9l-2 3.2h3l-2 3.3"/></svg>'
   };
   var TOOLS = [
-    { key: 'fit', title: 'Is solar right for my home?', desc: 'Check your home, bill and roof in 3 quick steps.', time: 'About 1 minute' },
-    { key: 'savings', title: 'How much could I save?', desc: 'Your yearly saving, the right system size and payback.', time: 'About 30 seconds' },
-    { key: 'battery', title: 'Is a battery worth it?', desc: 'Find out if a battery suits you, what size, and the rebate.', time: 'About 30 seconds' }
+    { key: 'fit', tag: 'Solar check', title: 'Is solar right for my home?', who: 'Just starting to look?', desc: 'Checks your home, bill and roof in 3 quick steps.', time: 'About 1 min', mini: '<span class="slw-mk">Your result</span><span class="slw-pill">✓ Good fit for solar</span><span class="slw-mv">8 kW suits you</span><span class="slw-ms">Home, bill and roof checked</span>' },
+    { key: 'savings', tag: 'Savings', title: 'How much could I save?', who: 'Weighing up the cost?', desc: 'Your yearly saving, the right system size and payback.', time: 'About 30 sec', mini: '<span class="slw-mk">Estimated saving</span><span class="slw-mv">$1,450 a year</span><span class="slw-ms">Payback in about 5½ years</span><span class="slw-bars"><i style="height:90%"></i><i style="height:60%"></i><i style="height:40%"></i><i style="height:80%"></i></span>' },
+    { key: 'battery', tag: 'Battery', title: 'Is a battery worth it?', who: 'Thinking about a battery?', desc: 'Whether a battery suits you, what size, and the rebate.', time: 'About 30 sec', mini: '<span class="slw-mk">Your verdict</span><span class="slw-mv">13.5 kWh suits you</span><span class="slw-batt"><b></b><span>Worth it</span></span>' }
   ];
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function qs(name) { var m = location.search.match(new RegExp('[?&]' + name + '=([^&#]*)')); return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : ''; }
@@ -683,15 +713,15 @@ render();
     var fl = document.createElement('link'); fl.rel = 'stylesheet'; fl.href = 'https://fonts.googleapis.com/css2?family=' + st.fonts + '&display=swap'; document.head.appendChild(fl);
     var base = /^https?:\/\//.test(parentPage) ? parentPage : location.href.split('#')[0];
     var cfg = { id: clientId, demo: false, name: name, shortName: short, brandColor: brand, accent: accent, theme: st.theme, fontHead: st.fontHead, fontBody: st.fontBody,
-      phone: String(c.phone || ''), privacyUrl: String(c.privacy_url || '').trim() || DEFAULT_PRIVACY, webhookUrl: LEAD_HOOK, resultsBaseUrl: base, poweredBy: 'Social Ladder' };
+      phone: String(c.phone || ''), privacyUrl: String(c.privacy_url || '').trim() || DEFAULT_PRIVACY, webhookUrl: LEAD_HOOK, resultsBaseUrl: base, poweredBy: 'SLS' };
     var tpl = document.getElementById('slq-tpl');
     var frame = null, restoreQ = null;
 
     function cards() {
       frame = null;
-      root.innerHTML = '<div class="slw-head"><h2>Free solar checks from ' + esc(short) + '</h2><p>Quick answers for your home. No sign-up to start.</p></div><div class="slw-cards">' +
-        TOOLS.map(function (t, i) { return '<button type="button" class="slw-card" data-i="' + i + '"><span class="slw-ico">' + ICO[t.key] + '</span><h3>' + t.title + '</h3><p>' + t.desc + '</p><span class="slw-meta">⏱ ' + t.time + '</span><span class="slw-go">Start →</span></button>'; }).join('') +
-        '</div><p class="slw-by">Powered by Social Ladder</p>';
+      root.innerHTML = '<div class="slw-head"><span class="slw-eb">Free from ' + esc(short) + '</span><h2>See what solar could do for your home</h2><p>Pick a quick check. Answers in under a minute, no sign-up to start.</p></div><div class="slw-cards">' +
+        TOOLS.map(function (t, i) { return '<button type="button" class="slw-card" data-i="' + i + '"><span class="slw-prev"><span class="slw-tag">' + ICO[t.key] + t.tag + '</span><span class="slw-num">0' + (i + 1) + '</span><span class="slw-mini">' + t.mini + '</span></span><span class="slw-body"><h3>' + t.title + '</h3><p class="slw-for">' + t.who + '</p><p class="slw-desc">' + t.desc + '</p><span class="slw-meta"><span>⏱ ' + t.time + '</span><span>✓ No sign-up</span></span></span><span class="slw-go">Start →</span></button>'; }).join('') +
+        '</div><p class="slw-by">SLS</p>';
       [].forEach.call(root.querySelectorAll('.slw-card'), function (b) { b.addEventListener('click', function () { open(+b.getAttribute('data-i')); toParents({ type: 'slw-scroll', top: 0 }); }); });
       sendHeight();
     }
@@ -699,7 +729,7 @@ render();
       var t = TOOLS[i], o = {}; for (var k in cfg) o[k] = cfg[k]; o.flow = t.key;
       var pre = '<script>window.SLF_OVERRIDE=' + JSON.stringify(o) + ';window.SLF_EMBED=true;' + (restoreQ ? 'window.SLQ_RESTORE=' + JSON.stringify(restoreQ) + ';' : '') + '<\/script>';
       restoreQ = null;
-      root.innerHTML = '<div class="slw-top"><button type="button" class="slw-back">← All checks</button><span class="slw-title">' + esc(t.title) + '</span></div><iframe class="slw-frame" title="' + esc(t.title) + '"></iframe><p class="slw-by">Powered by Social Ladder</p>';
+      root.innerHTML = '<div class="slw-top"><button type="button" class="slw-back">← All checks</button><span class="slw-title">' + esc(t.title) + '</span></div><iframe class="slw-frame" title="' + esc(t.title) + '"></iframe><p class="slw-by">SLS</p>';
       root.querySelector('.slw-back').addEventListener('click', cards);
       frame = root.querySelector('.slw-frame');
       frame.srcdoc = '<!doctype html><html lang="en-AU"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' + esc(t.title) + '</title>' +
