@@ -6,7 +6,7 @@
   var H = 'https://kingsly-the-dog.github.io', s = document.currentScript;
   if (!s) return;
   var c = s.getAttribute('data-client') || '', f = document.createElement('iframe');
-  f.src = H + '/solar-embed/tools-embed/?c=' + encodeURIComponent(c) + '&p=' + encodeURIComponent(location.href.split('#')[0]) + (location.hash.indexOf('#try=') === 0 ? location.hash : '');
+  f.src = H + '/solar-embed/tools-embed/index.html?c=' + encodeURIComponent(c) + '&p=' + encodeURIComponent(location.href.split('#')[0]) + (location.hash.indexOf('#try=') === 0 ? location.hash : '');
   f.title = 'Free solar checks';
   f.setAttribute('scrolling', 'no');
   f.style.cssText = 'display:block;width:100%;border:0;height:520px;overflow:hidden';
