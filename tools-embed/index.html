@@ -662,7 +662,7 @@ render();
     try {
       var t = resp.table, cols = t.cols.map(function (c) { return String(c.label || c.id || '').trim().toLowerCase().replace(/\s+/g, '_'); });
       var rows = t.rows.map(function (r) { var o = {}; cols.forEach(function (k, i) { var c = r.c[i]; o[k] = c ? (c.f != null ? c.f : c.v) : ''; }); return o; });
-      var row = rows.filter(function (r) { return String(r.client_id || '').trim().toLowerCase() === clientId; })[0];
+      var k0 = cols[0]; var row = rows.filter(function (r) { return String(r.client_id || r[k0] || '').trim().toLowerCase() === clientId; })[0];
       if (!row) return off(null);
       if (String(row.status || '').trim().toUpperCase() !== 'ON') return off(row);
       start(row);
