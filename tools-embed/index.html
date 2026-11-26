@@ -173,6 +173,11 @@ table.t tr.pick td{font-weight:700;color:var(--brand)}
 .upmsg{margin:10px 0 0;font-size:14px;padding:10px 12px;border-radius:10px;background:var(--tint);color:var(--ink2)}.upmsg.ok{background:#E7F6EC;color:#0B4B2A}.upmsg.bad{background:#FDECEC;color:#8A1C1C}
 .manl{margin-top:10px;display:flex;flex-wrap:wrap;gap:4px 16px}.manl .link{margin:0}
 .man{margin-top:10px;padding:14px;border-radius:var(--r);background:var(--tint)}.mhint{margin:0 0 8px;font-size:14px;color:var(--ink2)}.mrow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.mf label{display:block;font-size:13px;font-weight:700;color:var(--ink)}.mf .in{max-width:none;font-size:16px;padding:11px 12px;margin-top:4px}@media(max-width:520px){.mrow{grid-template-columns:1fr 1fr}}
+.checks{margin:18px 0 0;padding:16px 18px;border-radius:var(--r);background:var(--tint)}.chh{margin:0 0 10px;font-weight:800;color:var(--brand);display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.chh span{font-weight:600;font-size:13px;color:var(--muted)}
+.checks ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}.checks li{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start;background:#fff;border-radius:12px;padding:10px 12px;font-size:14.5px;color:var(--ink2);line-height:1.45}.checks li b{display:block;color:var(--ink);font-size:14.5px}
+.cm{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:800;color:#fff;background:#2E9E5B}.checks li.check .cm{background:#D98B00}
+.upq{position:relative;display:block;margin-top:12px;padding:12px 14px;border:1.5px dashed color-mix(in srgb,var(--accent) 55%,var(--line));border-radius:var(--r);background:#fff;font-weight:700;font-size:14.5px;color:var(--brand);cursor:pointer}.upq input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}.upq .opt-tag{display:block;font-weight:500;margin-top:2px}
+.qt{margin-top:12px}.qth{margin:0 0 6px;font-weight:800;color:var(--brand)}.qt table.t td,.qt table.t th{font-size:13.5px;padding:7px 6px}
 .foot{margin-top:24px;font-size:12.5px;color:var(--muted);text-align:center}
 .foot .link{font-size:13px;margin:6px 0 0}
 [data-preset=bold]{--r:8px;--r-btn:8px}
@@ -309,22 +314,28 @@ var Q={
  own:{h:'Do you own the property?',o:[['own','I own my home'],['buying','Buying or building'],['rent','I rent'],['strata','Apartment or strata']]},
  solar:{h:'Do you already have solar panels?',o:[['no','No, not yet'],['panels','Yes — panels only'],['both','Yes — panels + battery']],one:true},
  bill:{h:'Roughly what do you pay for power a month?',help:'A rough guess is fine.',o:[['u150','Under $150'],['150-250','$150–$250'],['250-350','$250–$350'],['350-500','$350–$500'],['o500','Over $500'],['notsure','Not sure — use the average']],usage:true},
- people:{h:'How many people live there?',help:'So we can use the average for a home like yours.',o:[['1','1'],['2','2'],['3-4','3–4'],['5+','5+']],when:function(a){return a.bill==='notsure'}},
+ people:{h:'How many people live there?',help:'So we can use the average for a home like yours.',o:[['1','1'],['2','2'],['3-4','3–4'],['5+','5+']],when:function(a){return a.bill==='notsure'&&!(parseFloat(a.kwh)>0)}},
  home:{h:'When are you usually home?',help:'This helps us work out how much solar you’d actually use yourself.',o:[['day','Most of the day'],['part','Part of the day'],['eve','Mostly evenings'],['rarely','Rarely home']]},
- roof:{h:'Is your roof mostly sunny?',help:'No need to know which way it faces.',o:[['sunny','Mostly sunny'],['partly','Partly shaded'],['shaded','Mostly shaded'],['notsure','Not sure']]},
+ changes:{h:'Any big changes coming in the next few years?',help:'Tap any that apply. They change the size that suits you.',multi:true,o:[['ev','An electric car'],['pool','A pool or spa'],['gas','Gas to electric'],['more','More people at home'],['none','None of these']]},
+ evday:{h:'Is the car usually home during the day?',help:'Charging from your own panels is the cheapest way to run it.',o:[['yes','Yes, most days'],['some','Some days'],['no','No, mostly at night']],when:function(a){return has(a.changes,'ev')}},
+ dir:{h:'Which way does most of your roof face?',help:'Not sure is fine. Your installer checks this on site.',o:[['north','North'],['eastwest','East or west'],['south','South'],['notsure','Not sure']]},
+ syssize:{h:'How big is your solar system?',help:'It’s on your inverter or old quote. Not sure is fine.',o:[['u5','Under 5 kW'],['5-8','5–8 kW'],['o8','Over 8 kW'],['notsure','Not sure']],when:function(a){return a.solar==='panels'||a.solar==='both'}},
+ bpri:{h:'What matters most to you?',o:[['bills','Lower power bills'],['backup','Backup when the power goes out'],['payback','Fastest payback'],['notsure','Not sure yet']]},
+ roof:{h:'Is your roof mostly sunny?',help:'Think about trees, buildings or other roofs shading it.',o:[['sunny','Mostly sunny'],['partly','Partly shaded'],['shaded','Mostly shaded'],['notsure','Not sure']]},
  interest:{h:'What are you interested in?',o:[['solar','Solar only'],['both','Solar + battery'],['battery','Battery only'],['notsure','Not sure yet']]},
  timing:{h:'When are you hoping to get it done?',o:[['3m','Within 3 months'],['6m','In 3–6 months'],['12m','In 6–12 months'],['research','Just researching for now']]},
  postcode:{h:'What’s your postcode?',help:'So we can check your area and your rebate.',text:true},
  priority:{h:'Which matters most to you?',o:[['bills','Lower power bills'],['payback','Fastest payback'],['backup','Battery backup when the power goes out'],['notsure','Not sure yet']],optional:true},
- ev:{h:'Do you have an electric car, or plan to?',o:[['no','No'],['yes','Yes, I have one'],['soon','Planning one in the next 2 years']]},
  quotes:{h:'Have you had any solar quotes yet?',o:[['none','Not yet'],['one','Yes, one'],['two','Yes, two or more']]}
 };
 var FLOWS={
- fit:{title:'Is solar right for my home?',time:'about 60 seconds',steps:[{t:'Your home',q:['own','solar']},{t:'Your bill',q:['bill','people','home']},{t:'Your roof and timing',q:['roof','interest','timing','postcode']}]},
- savings:{title:'How much could I save with solar?',time:'about 30 seconds',steps:[{t:'Your bill',q:['bill','people','home']},{t:'Your roof and timing',q:['roof','interest','timing']}]},
- battery:{title:'Is a battery worth it?',time:'about 30 seconds',steps:[{t:'Your solar',q:['solar','interest']},{t:'Your bill and timing',q:['bill','people','timing']}]}
+ fit:{title:'Is solar right for my home?',time:'about 90 seconds',secs:90,steps:[{t:'Your home',q:['own','solar','changes']},{t:'Your power',q:['bill','people','home','evday']},{t:'Your roof and plans',q:['roof','dir','interest','timing','postcode']}]},
+ savings:{title:'How much could I save with solar?',time:'about 45 seconds',secs:45,steps:[{t:'Your power',q:['bill','people','home','changes','evday']},{t:'Your roof and timing',q:['roof','dir','timing']}]},
+ battery:{title:'Is a battery worth it?',time:'about 45 seconds',secs:45,steps:[{t:'Your solar',q:['solar','syssize','bpri']},{t:'Your power',q:['bill','people','home','timing']}]}
 };
-var LABEL=function(id,v){var q=Q[id];if(!q||!v)return '';if(q.text)return v;for(var i=0;i<q.o.length;i++)if(q.o[i][0]===v)return q.o[i][1];return v};
+function has(v,k){return (','+(v||'')+',').indexOf(','+k+',')>-1}
+var LABEL=function(id,v){var q=Q[id];if(!q||!v)return '';if(q.text)return v;if(q.multi)return v.split(',').map(function(x){return LABEL1(q,x)}).join(', ');return LABEL1(q,v)};
+var LABEL1=function(q,v){for(var i=0;i<q.o.length;i++)if(q.o[i][0]===v)return q.o[i][1];return v};
 
 /* ---------- State ---------- */
 var lastSi=0;var S={flow:FLOWS[C.flow]?C.flow:'fit',a:{},i:0,view:'q',usageOpen:false,unlocked:false,sent:false,first:'',email:'',extrasSent:false,err:'',up:{}};
@@ -337,12 +348,16 @@ function forget(){try{localStorage.removeItem(KEY)}catch(e){}}
 
 function steps(){return FLOWS[S.flow].steps.map(function(s){return{t:s.t,q:s.q.filter(function(id){return !Q[id].when||Q[id].when(S.a)})}})}
 function screens(){var out=[],st=steps();st.forEach(function(s,si){if(mobile())s.q.forEach(function(id,qi){out.push({si:si,t:s.t,q:[id],first:qi===0})});else out.push({si:si,t:s.t,q:s.q,first:true})});return out}
-function answered(id){var v=S.a[id];if(Q[id].text)return /^\d{4}$/.test(v||'');return !!v}
+function answered(id){var v=S.a[id];if(id==='bill'&&parseFloat(S.a.kwh)>0)return true;if(Q[id].text)return /^\d{4}$/.test(v||'');return !!v}
 
 /* ---------- Maths (screening estimates, not a quote) ---------- */
 var BILL={'u150':110,'150-250':200,'250-350':300,'350-500':425,'o500':600};
 var DAY={day:.55,part:.45,eve:.3,rarely:.25};
 var SHADE={sunny:1,partly:.85,shaded:.65,notsure:.9};
+var DIRF={north:1,eastwest:.87,south:.72,notsure:.9};
+var LOAD={ev:6,pool:4,gas:4},LOADNAME={ev:'electric car',pool:'pool or spa',gas:'switch from gas'};
+var EVDAY={yes:.7,some:.35,no:.1},OLDKW={u5:4,'5-8':6.6,o8:10,notsure:6.6};
+function clamp(x,a,b){return Math.max(a,Math.min(b,x))}
 var SIZES=[3,5,6.6,8,10,13],BATTS=[5,10,13.5,16];
 function art(n,cap){var a=/^(8|11|18)(\D|$)/.test(String(n))?'an':'a';return cap?a.charAt(0).toUpperCase()+a.slice(1):a}
 function r10(x){return Math.round(x/10)*10}
@@ -358,42 +373,55 @@ function calc(){var a=S.a,src,kwh,known=parseFloat(a.kwh);
  if(known>0&&known<200){kwh=known;src='usage'}
  else if(BILL[a.bill]){kwh=Math.max(4,(BILL[a.bill]*12/365-SUP)/(BUY/100));src='bill'}
  else{var avg=C.saAverageKwhDay||{};kwh=+(avg[a.people]||avg['default']||14);src=a.people?'average-size':'average'}
- var ds=DAY[a.home]||.4,eff=YIELD*(SHADE[a.roof]||.9),target=kwh*1.5/eff,kw=SIZES[SIZES.length-1];
+ var ds=DAY[a.home]||.4,eff=YIELD*(SHADE[a.roof]||.9)*(DIRF[a.dir]||.9);
+ /* Future loads (EV, pool, gas to electric, more people): sized for, but savings are counted on today's use only */
+ var loads=[],extra=0,extraDay=0,sizeAdd=0;
+ ['ev','pool','gas'].forEach(function(k){if(has(a.changes,k)){var sh=k==='ev'?(EVDAY[a.evday]||.35):k==='pool'?.8:.5;loads.push(k);extra+=LOAD[k];extraDay+=LOAD[k]*sh;sizeAdd+=LOAD[k]*clamp(.3+sh,.4,1)}});
+ if(has(a.changes,'more')){extra+=kwh*.15;extraDay+=kwh*.15*ds;sizeAdd+=kwh*.15;loads.push('more')}
+ var target=(kwh+sizeAdd)*1.5/eff,kw=SIZES[SIZES.length-1];
  for(var i=0;i<SIZES.length;i++)if(SIZES[i]>=target){kw=SIZES[i];break}
- function sav(k){var P=k*eff,day=kwh*ds,self=Math.min(day,P),exp=P-self;return{y:365*(self*BUY+exp*FIT)/100,exp:exp}}
+ function sav(k){var P=k*eff,day=kwh*ds,self=Math.min(day,P),exp=P-self;return{y:365*(self*BUY+exp*FIT)/100,exp:exp,P:P,self:self}}
  var s=sav(kw),price=interp(C.marketSolarPrices,'kw',kw),pm=price?(price.low+price.high)/2:null;
- var night=kwh*(1-ds),bt=BATTS[BATTS.length-1];for(var j=0;j<BATTS.length;j++)if(BATTS[j]>=night*.8){bt=BATTS[j];break}
- var hasPanels=a.solar==='panels'||a.solar==='both',solarExp=hasPanels?night:s.exp;
+ var evSave=0;if(has(a.changes,'ev')){var left=Math.max(0,s.exp),evd=LOAD.ev*(EVDAY[a.evday]||.35);evSave=r10(365*Math.min(evd,left)*(BUY-FIT)/100)}
+ var night=kwh*(1-ds)+(extra-extraDay),bt=BATTS[BATTS.length-1];for(var j=0;j<BATTS.length;j++)if(BATTS[j]>=night*.8){bt=BATTS[j];break}
+ var hasPanels=a.solar==='panels'||a.solar==='both',P0=hasPanels?(OLDKW[a.syssize]||6.6)*eff:0,exp0=hasPanels?Math.max(0,P0-Math.min(kwh*ds,P0)):0,solarExp=hasPanels?exp0:s.exp;
  var store=Math.min(night,bt*.9,solarExp),bsave=365*store*(BUY-FIT)/100,bprice=interp(C.marketBatteryPrices,'kwh',bt),bpm=bprice?(bprice.low+bprice.high)/2:null;
+ var ubm=S.up&&S.up.bill&&S.up.bill.monthlyCostAud,billNow=ubm?Math.round(ubm):BILL[a.bill]||Math.round((kwh*BUY/100+SUP)*30.4),billAfter=Math.max(Math.round(SUP*30.4*.5),billNow-s.y/12);
+ var backupH=Math.round(bt*.9/.4);
  var alt=SIZES[Math.min(SIZES.indexOf(kw)+1,SIZES.length-1)];
  return{kwh:kwh,src:src,kw:kw,save:r10(s.y),lo:r10(s.y*.8),hi:r10(s.y*1.2),price:price,payback:pm?half(pm/s.y):null,
   batt:bt,bsave:r10(bsave),blo:r10(bsave*.8),bhi:r10(bsave*1.2),bprice:bprice,bpay:bpm&&bsave>0?half(bpm/bsave):null,reb:rebate(bt),
-  alt:alt,altSave:r10(sav(alt).y),altPrice:interp(C.marketSolarPrices,'kw',alt),bill:BILL[a.bill]||null,ds:ds}}
+  alt:alt,altSave:r10(sav(alt).y),altPrice:interp(C.marketSolarPrices,'kw',alt),bill:BILL[a.bill]||null,ds:ds,eff:eff,loads:loads,extra:extra,evSave:evSave,billNow:r10(billNow),billAfter:r10(billAfter),backupH:backupH,store:store,smallSystem:hasPanels&&a.syssize==='u5'}}
 
 function verdict(R){var a=S.a;
  if(a.solar==='both')return{level:'checkup',label:'Check-up',h:'You’re already set up — here’s how to get more from it'};
  if(a.roof==='shaded')return{level:'notyet',label:'Not yet',h:'Solar isn’t quite right for your home yet — here’s why'};
- var flags=0;if(a.own==='rent'||a.own==='strata')flags++;if(a.roof==='partly')flags++;if(a.bill==='u150'&&(a.home==='rarely'||a.home==='eve'))flags++;if(a.solar==='panels')flags++;
+ var flags=0;if(a.own==='rent'||a.own==='strata')flags++;if(a.roof==='partly')flags++;if(a.dir==='south')flags++;if(a.bill==='u150'&&(a.home==='rarely'||a.home==='eve'))flags++;if(a.solar==='panels')flags++;
  if(flags)return{level:'could',label:'Could work',h:'Solar could work for your home — here’s what to check'};
  return{level:'good',label:'Good fit',h:'Solar looks like a good fit for your home'}}
 
 function route(){var i=S.a.interest;if(S.flow==='battery')return i==='both'||i==='solar'?'both':'battery';if(i==='both'||i==='battery')return i;if(S.a.solar==='panels')return 'battery';return 'solar'}
 
-function findings(R,V){var a=S.a,f=[];
- if(a.own==='rent'||a.own==='strata')f.push('You’ll need the owner’s OK — we can help you work out what to ask.');
- if(a.roof==='sunny')f.push('Your roof is mostly sunny, so panels should do well there.');
- else if(a.roof==='partly')f.push('Your roof is partly shaded. That’s often fine, but it’s worth checking on site where the shade falls.');
- else if(a.roof==='shaded')f.push('A mostly shaded roof makes a lot less power, so the savings may not stack up. An installer can check if part of the roof gets enough sun.');
- else if(a.roof==='notsure')f.push('You weren’t sure about shade, so we’ve allowed for a little. A quick look at your roof will firm this up.');
- if(a.home==='eve'||a.home==='rarely')f.push('You’re mostly out during the day, so a battery would help you use more of your own solar at night.');
- else if(a.home==='day')f.push('You’re home most of the day, so you’ll use a lot of your solar as it’s made. That’s where the savings come from.');
- if(a.solar==='both')f.push('You already have panels and a battery. A check-up can show if they’re working as they should and if a top-up is worth it.');
- else if(a.solar==='panels')f.push('You already have panels, so the next step is usually a battery or a top-up, not a new system.');
- if(R.reb.before&&R.reb.drop&&(route()!=='solar'||S.flow==='battery'))f.push('Your battery rebate drops on '+R.reb.date+' — that’s about '+money(R.reb.drop)+' less on '+art(R.batt)+' '+R.batt+' kWh battery.');
- if(R.src!=='bill'&&R.src!=='usage')f.push('You weren’t sure of your bill, so we used the average for a South Australian home'+(a.people?' with '+LABEL('people',a.people)+' '+(a.people==='1'?'person':'people'):'')+'.');
- return f.slice(0,3)}
+function checks(R){var a=S.a,c=[],ok='good',ck='check';
+ function row(l,f,t){c.push({l:l,f:f,t:t})}
+ if(a.own==='rent'||a.own==='strata')row('Permission',ck,'You’ll need the '+(a.own==='rent'?'owner’s':'strata’s')+' OK before anything goes on the roof. We can help you work out what to ask.');
+ if(a.solar==='both')row('Your system now',ok,'You already have panels and a battery. A check-up shows if they’re working as they should and if a top-up is worth it.');
+ else if(a.solar==='panels')row('Your system now',ck,R.smallSystem?'A system under 5 kW is often too small to charge a battery well. Adding panels may come first.':'You already have panels, so the next step is usually a battery, not a new system.');
+ if(a.roof)row('Roof sun',a.roof==='sunny'?ok:ck,{sunny:'Little shade through the day, which is the best case.',partly:'Shade cuts output, so we’ve allowed for about 15% less. Worth checking where it falls.',shaded:'Panels would make about a third less here. An installer can check if part of the roof gets better sun.',notsure:'We’ve allowed for a little shade. A quick look at your roof will firm this up.'}[a.roof]);
+ if(a.dir)row('Roof direction',a.dir==='north'||a.dir==='eastwest'?ok:ck,{north:'North-facing is ideal.',eastwest:'East or west works well. It makes about 13% less than north, so we’ve sized up a little.',south:'South-facing panels make about 30% less. Often still worth it, but check the numbers on site.',notsure:'We’ve assumed a mix of directions. Your installer checks this on site.'}[a.dir]);
+ if(a.home)row('Daytime use',a.home==='day'||a.home==='part'?ok:ck,a.home==='day'||a.home==='part'?'You’ll use a lot of your solar as it’s made. That’s where the savings come from.':'You’re out during the day, so a lot of your solar would be sold for about '+FIT+'c a unit. A battery lets you use it at night instead.');
+ if(R.loads.length){var nm=R.loads.filter(function(k){return k!=='more'}).map(function(k){return LOADNAME[k]});if(has(a.changes,'more'))nm.push('more people at home');
+  if(has(a.changes,'ev')&&a.evday==='no')row('Future plans',ck,'We’ve sized for your '+nm.join(' and ')+'. Night-time car charging can’t use solar directly, so a battery or some daytime charging helps.');
+  else row('Future plans',ok,'We’ve sized your system for your '+nm.join(' and ')+' too.'+(R.evSave?' Charging the car from your panels could save about '+money(R.evSave)+' a year on top.':''))}
+ if(S.flow==='battery'&&a.bpri==='backup')row('Backup',ck,'Not every battery install includes blackout backup. Ask for it, as it can add to the price.');
+ if((route()!=='solar'||S.flow==='battery')&&R.reb.before&&R.reb.drop)row('Rebate deadline',ck,'Your battery rebate drops on '+R.reb.date+'. That’s about '+money(R.reb.drop)+' less on '+art(R.batt)+' '+R.batt+' kWh battery.');
+ if(R.src!=='bill'&&R.src!=='usage')row('Your usage',ck,'You weren’t sure of your bill, so we used a typical South Australian home'+(a.people?' with '+LABEL('people',a.people)+(a.people==='1'?' person':' people'):'')+'.');
+ return c.slice(0,6)}
+function findings(R){return checks(R).map(function(x){return x.l+': '+x.t})}
+function checksHtml(R){var c=checks(R);if(!c.length)return '';var good=c.filter(function(x){return x.f==='good'}).length;
+ return '<div class="checks"><p class="chh">Your home, checked <span>'+good+' of '+c.length+' look good</span></p><ul>'+c.map(function(x){return '<li class="'+x.f+'"><span class="cm" aria-hidden="true">'+(x.f==='good'?'✓':'!')+'</span><span><b>'+esc(x.l)+'</b>'+esc(x.t)+'</span></li>'}).join('')+'</ul></div>'}
 
-function usageNote(R){return R.src==='usage'?'From the daily use you entered.':R.src==='bill'?'Worked out from your bill.':'Based on the average for a South Australian home'+(S.a.people?' your size':'')+', as you weren’t sure of your bill.'}
+function usageNote(R){return S.up&&S.up.bill&&S.up.bill.dailyKwh&&R.src==='usage'?'Read from the bill you uploaded.':R.src==='usage'?'From the daily use you entered.':R.src==='bill'?'Worked out from your bill.':'Based on the average for a South Australian home'+(S.a.people?' your size':'')+', as you weren’t sure of your bill.'}
 
 /* ---------- Helpers ---------- */
 function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
@@ -408,8 +436,14 @@ function toTop(){if(EMBED)post({type:'slq-scroll'});else{var r=document.getEleme
 /* ---------- Render: questions ---------- */
 function qHtml(id){var q=Q[id],v=S.a[id],h='<div class="q" data-q="'+id+'"><h2 id="h_'+id+'">'+esc(q.h)+(q.optional?' <span class="opt-tag">(optional)</span>':'')+'</h2>'+(q.help?'<p class="help">'+esc(q.help)+'</p>':'');
  if(q.text)h+='<input class="in" id="i_'+id+'" inputmode="numeric" autocomplete="postal-code" maxlength="4" placeholder="e.g. 5162" aria-labelledby="h_'+id+'" value="'+esc(v||'')+'">';
+ else if(q.multi)h+='<div class="opts" role="group" aria-labelledby="h_'+id+'">'+q.o.map(function(o){var on=has(v,o[0]);return '<button type="button" class="opt'+(on?' on':'')+'" role="checkbox" aria-checked="'+on+'" data-multi="'+id+'" data-v="'+o[0]+'">'+esc(o[1])+'</button>'}).join('')+'</div>';
  else h+='<div class="opts'+(q.one?' one':'')+'" role="radiogroup" aria-labelledby="h_'+id+'">'+q.o.map(function(o){return '<button type="button" class="opt'+(v===o[0]?' on':'')+'" role="radio" aria-checked="'+(v===o[0])+'" data-id="'+id+'" data-v="'+o[0]+'">'+esc(o[1])+'</button>'}).join('')+'</div>';
- if(q.usage){h+='<button type="button" class="link" id="usageLink" aria-expanded="'+S.usageOpen+'">'+(S.usageOpen?'Hide my usage':'I know my usage')+'</button>';
+ if(q.usage){var ub=S.up.bill;
+  h+='<label class="upq"><input type="file" accept="application/pdf,.pdf,image/*" id="up_bill_q">📄 '+(ub&&ub.dailyKwh?'Bill added — change it':'Have your bill? Upload it for an exact result')+' <span class="opt-tag">(PDF or photo, optional)</span></label>';
+  if(S.up.billBusy)h+='<p class="upmsg">Reading your bill…</p>';
+  else if(ub&&ub.dailyKwh)h+='<p class="upmsg ok">✓ From your bill: <b>'+(Math.round(ub.dailyKwh*10)/10)+' units a day</b>'+(ub.monthlyCostAud?', about '+money(ub.monthlyCostAud)+' a month':'')+'. We’ll use your real numbers.</p>';
+  else if(S.up.billPhoto||S.up.billFail)h+='<p class="upmsg">'+(S.up.billPhoto?'Got your photo. We can’t read photos automatically yet, so':'We couldn’t read that one, so')+' type the “average daily use” (kWh) from it below, or just pick the closest amount above.</p>';
+  h+='<button type="button" class="link" id="usageLink" aria-expanded="'+S.usageOpen+'">'+(S.usageOpen?'Hide my usage':'I know my usage')+'</button>';
   if(S.usageOpen)h+='<div class="usage"><label for="i_kwh">Daily use in kWh <span class="opt-tag">(on your bill as “average daily use”)</span></label><input class="in" id="i_kwh" inputmode="decimal" placeholder="e.g. 18" value="'+esc(S.a.kwh||'')+'"><label style="margin-top:12px">Is your bill higher in winter or summer?</label><div class="opts">'+[['winter','Winter'],['summer','Summer'],['same','About the same']].map(function(o){return '<button type="button" class="opt'+(S.a.season===o[0]?' on':'')+'" data-id="season" data-v="'+o[0]+'">'+o[1]+'</button>'}).join('')+'</div></div>'}
  if(q.optional)h+='<button type="button" class="link skip" data-skip="'+id+'">Skip</button>';
  return h+'</div>'}
@@ -417,7 +451,7 @@ function qHtml(id){var q=Q[id],v=S.a[id],h='<div class="q" data-q="'+id+'"><h2 i
 function renderQ(){var sc=screens();if(S.i>=sc.length)S.i=sc.length-1;var cur=sc[S.i],st=steps(),last=S.i===sc.length-1,F=FLOWS[S.flow];lastSi=cur.si;
  var pct=Math.round((S.i)/(sc.length)*100);
  var h='<div class="top">'+(S.i>0?'<button type="button" class="back" id="back">← Back</button>':'<span></span>')+'<span class="prog"><b>Step '+(cur.si+1)+' of '+st.length+'</b> — '+F.time+'</span></div><div class="bar" aria-hidden="true"><i style="width:'+Math.max(4,pct)+'%"></i></div>';
- if(S.i===0)h+='<p class="intro">'+st.length+' quick steps. About '+(st.length===3?'60':'30')+' seconds. No sign-up to see your result.</p>';
+ if(S.i===0)h+='<p class="intro">'+st.length+' quick steps. About '+F.secs+' seconds, mostly taps. No sign-up to see your result.</p>';
  if(S.welcome)h+='<div class="wb"><span>Welcome back — we kept your answers.</span><button type="button" class="link" id="wbGo">Carry on</button><button type="button" class="link" id="wbNew">Start again</button></div>';
  h+='<p class="steph">'+esc(cur.t)+'</p>'+cur.q.map(qHtml).join('');
  var ready=cur.q.every(function(id){return Q[id].optional||answered(id)});
@@ -441,8 +475,9 @@ function statsHtml(R){var rt=route(),li=[],a=S.a,rb=R.reb;
  var hasSolar=a.solar==='panels'||a.solar==='both',showSolar=S.flow!=='battery'&&!hasSolar&&rt!=='battery',showBatt=S.flow==='battery'||rt!=='solar'||a.solar==='panels';
  if(a.solar==='both'&&S.flow!=='battery'){li.push(['🔧','<b>A system check-up</b> is the best next step','<span class="sm">To see if your panels and battery are working as they should, and if a top-up is worth it.</span>']);return wrap(li)}
  if(showSolar){
-  li.push(['☀️',art(R.kw,1)+' <b>'+R.kw+' kW</b> system would suit you','<span class="sm">System size — how much solar to put on your roof.</span>']);
+  li.push(['☀️',art(R.kw,1)+' <b>'+R.kw+' kW</b> system would suit you','<span class="sm">System size — how much solar to put on your roof.'+(R.loads.length?' Sized for your future plans too.':'')+'</span>']);
   if(S.flow!=='savings')li.push(['💰','You could save about <b>'+money(R.save)+' a year</b>','<span class="sm">Likely range '+money(R.lo)+'–'+money(R.hi)+' a year, off your power bill.</span>']);
+  li.push(['🧾','Your bill: about <b>'+money(R.billNow)+' a month</b> now → about <b>'+money(R.billAfter)+'</b> with solar','<span class="sm">Based on how you use power today. A rough guide, not a quote.</span>']);
   if(R.payback)li.push(['📅','Payback in about <b>'+R.payback+' years</b>','<span class="sm">'+(S.unlocked?'Typical price for this size: '+money(R.price.low)+'–'+money(R.price.high)+' after the federal discount.':'Based on a typical price for this size. The price range is in your full report.')+'</span>']);
  }
  if(showBatt){
@@ -451,6 +486,7 @@ function statsHtml(R){var rt=route(),li=[],a=S.a,rb=R.reb;
   if(!showSolar){
    if(a.solar==='no'&&a.interest==='battery')li.push(['💡','<b>Best paired with solar</b>','<span class="sm">A battery on its own has little free power to store. Most people add both.</span>']);
    else{li.push(['💰','A battery could save about <b>'+money(R.bsave)+' a year</b>','<span class="sm">Likely range '+money(R.blo)+'–'+money(R.bhi)+' a year, by using your own solar at night.</span>']);
+    if(S.flow==='battery')li.push(['🔦','In a blackout it could keep your fridge, lights and wifi going for <b>'+(R.backupH>=24?'a day or more':'about '+R.backupH+' hours')+'</b>','<span class="sm">Only if backup is included in the install. Not all are, so ask for it.</span>']);
     if(R.bpay)li.push(['📅','Battery payback in about <b>'+R.bpay+' years</b>','<span class="sm">'+(S.unlocked?'Typical price for this size: '+money(R.bprice.low)+'–'+money(R.bprice.high)+'.':'Based on a typical price for this size. The price range is in your full report.')+'</span>'])}
   }
  }
@@ -499,24 +535,32 @@ function reportHtml(R){var a=S.a,rt=route(),h='';
 
 function extrasHtml(){if(S.extrasSent)return '<div class="extra"><h3>Thanks — your report is updated.</h3><p class="gb" style="margin:0">'+esc(NAME)+' will have these answers when they call.</p></div>';
  if(S.extrasSkipped)return '';
- return '<div class="extra" id="extra"><h3>Make your report more accurate</h3><p class="gb" style="margin:0;font-size:14px;color:var(--muted)">Optional. Takes about 20 seconds.</p>'+qHtml('priority').replace('<button type="button" class="link skip" data-skip="priority">Skip</button>','')+qHtml('ev')+qHtml('quotes')+upHtml()+'<div class="ctrl"><button type="button" class="btn" id="exSave">Save to my report</button></div><button type="button" class="link skip" id="exSkip">Skip — I’m done</button></div>'}
+ return '<div class="extra" id="extra"><h3>Make your report more accurate</h3><p class="gb" style="margin:0;font-size:14px;color:var(--muted)">Optional. Add a quote and we’ll check it against a fair price.</p>'+(S.a.bpri?'':qHtml('priority').replace('<button type="button" class="link skip" data-skip="priority">Skip</button>',''))+qHtml('quotes')+upHtml()+'<div class="ctrl"><button type="button" class="btn" id="exSave">Save to my report</button></div><button type="button" class="link skip" id="exSkip">Skip — I’m done</button></div>'}
 function fld(id,label,val,ph,mode){return '<div class="mf"><label for="'+id+'">'+label+'</label><input class="in" id="'+id+'" inputmode="'+(mode||'decimal')+'" placeholder="'+ph+'" value="'+esc(val||'')+'"></div>'}
 function upHtml(){var u=S.up,mb=u.mb||{},mq=u.mq||{};
- var h='<div class="q"><h2>Got your power bill or a quote? <span class="opt-tag">(optional)</span></h2><p class="help">A PDF, a photo or a screenshot all work. We read the numbers from a PDF for you. From a photo, just type 2 or 3 numbers below.</p>'+
- '<div class="ups"><label class="up"><input type="file" accept="application/pdf,.pdf,image/*" id="up_bill">📄 Add my bill</label><label class="up"><input type="file" accept="application/pdf,.pdf,image/*" id="up_quote">🧾 Add a quote</label></div><div id="upOut">'+upSummary()+'</div>';
- h+='<div class="manl"><button type="button" class="link" data-man="manBill" aria-expanded="'+!!u.manBill+'">'+(u.manBill?'Hide bill numbers':'No file handy? Type your bill numbers')+'</button>'+(u.manBill?'':' <button type="button" class="link" data-man="manQuote" aria-expanded="'+!!u.manQuote+'">'+(u.manQuote?'Hide quote numbers':'Type quote numbers')+'</button>')+'</div>';
+ var h='<div class="q"><h2>'+(u.bill&&u.bill.dailyKwh?'Got a quote? Let’s check it':'Got your power bill or a quote?')+' <span class="opt-tag">(optional)</span></h2><p class="help">A PDF, a photo or a screenshot all work. We read the numbers from a PDF for you. From a photo, just type 2 or 3 numbers below.</p>'+
+ '<div class="ups">'+(u.bill&&u.bill.dailyKwh?'':'<label class="up"><input type="file" accept="application/pdf,.pdf,image/*" id="up_bill">📄 Add my bill</label>')+'<label class="up"><input type="file" accept="application/pdf,.pdf,image/*" id="up_quote">🧾 '+((u.quotes||[]).length?'Add another quote':'Add a quote')+'</label></div><div id="upOut">'+upSummary()+'</div>';
+ h+='<div class="manl">'+(u.bill&&u.bill.dailyKwh&&!u.manBill?'':'<button type="button" class="link" data-man="manBill" aria-expanded="'+!!u.manBill+'">'+(u.manBill?'Hide bill numbers':'No file handy? Type your bill numbers')+'</button>')+(u.manBill?'':' <button type="button" class="link" data-man="manQuote" aria-expanded="'+!!u.manQuote+'">'+(u.manQuote?'Hide quote numbers':'Type quote numbers')+'</button>')+'</div>';
  if(u.manBill)h+='<div class="man"><p class="mhint">On your bill, look for <b>“average daily use”</b> in kWh. No daily figure? Divide the <b>total kWh used</b> by the <b>number of days</b>.</p><div class="mrow">'+fld('mb_daily','Average daily use (kWh)',mb.daily,'e.g. 18')+fld('mb_total','Bill total ($)',mb.total,'e.g. 420')+fld('mb_days','Days on the bill',mb.days,'e.g. 91','numeric')+'</div></div>';
  if(u.manBill&&!u.manQuote)h+='<div class="manl"><button type="button" class="link" data-man="manQuote" aria-expanded="false">Type quote numbers</button></div>';
  if(u.manQuote)h+='<div class="man"><p class="mhint">On the quote, look for the <b>system size</b> (kW) and the <b>total price</b>.</p><div class="mrow">'+fld('mq_kw','System size (kW)',mq.kw,'e.g. 6.6')+fld('mq_price','Total price ($)',mq.price,'e.g. 7450','numeric')+fld('mq_batt','Battery (kWh, if any)',mq.batt,'e.g. 13.5')+'</div></div>';
  return h+'</div>'}
+function quoteVerdict(q){if(!q.kw||!q.price)return '';var r=interp(C.marketSolarPrices,'kw',+q.kw);if(!r)return '';var p=+q.price-(q.batteryKwh&&C.marketBatteryPrices?(function(){var b=interp(C.marketBatteryPrices,'kwh',+q.batteryKwh);return b?(b.low+b.high)/2:0})():0);
+ return p<r.low*.9?'Below the usual range — check what’s included':p>r.high*1.1?'Above the usual range — worth asking why':'Within the usual range'}
+function quoteTable(qs){var L='ABC';return '<div class="qt"><p class="qth">'+(qs.length>1?'Your quotes, side by side':'Your quote, checked')+'</p><table class="t"><tr><th></th>'+qs.map(function(q,i){return '<th>Quote '+L[i]+'</th>'}).join('')+'</tr>'+
+ '<tr><td>Size</td>'+qs.map(function(q){return '<td>'+(q.kw?q.kw+' kW':'—')+(q.batteryKwh?' + '+q.batteryKwh+' kWh battery':'')+'</td>'}).join('')+'</tr>'+
+ '<tr><td>Price</td>'+qs.map(function(q){return '<td>'+(q.price?money(q.price):'—')+'</td>'}).join('')+'</tr>'+
+ '<tr><td>Per kW</td>'+qs.map(function(q){return '<td>'+(q.kw&&q.price&&!q.batteryKwh?money(q.price/q.kw):'—')+'</td>'}).join('')+'</tr>'+
+ (qs.some(function(q){return q.brands})?'<tr><td>Brands</td>'+qs.map(function(q){return '<td>'+esc(q.brands||'—')+'</td>'}).join('')+'</tr>':'')+
+ '<tr><td>Fair price?</td>'+qs.map(function(q){return '<td><b>'+esc(quoteVerdict(q)||'Need size and price')+'</b></td>'}).join('')+'</tr></table><p class="mhint" style="margin-top:6px">'+esc(SHORT)+' can go through '+(qs.length>1?'them':'it')+' with you line by line.</p></div>'}
 function upSummary(){var u=S.up,h='';
  if(u.billBusy||u.quoteBusy)h+='<p class="upmsg">Reading your PDF…</p>';
  if(u.billPhoto&&!u.bill)h+='<p class="upmsg">Got your photo. We can’t read photos automatically yet, so type the numbers from it below, or keep it handy for your call with '+esc(SHORT)+'.</p>';
  if(u.quotePhoto&&!u.quote)h+='<p class="upmsg">Got your quote photo. Type the size and price below, or keep it handy for your call with '+esc(SHORT)+'.</p>';
  if(u.bill){var b=u.bill,bits=[];if(b.dailyKwh)bits.push(Math.round(b.dailyKwh*10)/10+' units a day');if(b.tariffCents)bits.push(b.tariffCents+'c a unit');if(b.monthlyCostAud)bits.push('about '+money(b.monthlyCostAud)+' a month');
   h+='<p class="upmsg '+(bits.length?'ok':'')+'"><b>Bill:</b> '+(bits.length?esc(bits.join(' · '))+(b.dailyKwh?'. Your result above now uses your real usage.':''):'We couldn’t read the numbers from this one. Type them below — it takes 10 seconds.')+'</p>'}
- if(u.quote){var q=u.quote,qb=[];if(q.kw)qb.push(q.kw+' kW');if(q.batteryKwh)qb.push(q.batteryKwh+' kWh battery');if(q.price)qb.push(money(q.price));if(q.brands)qb.push(q.brands);
-  h+='<p class="upmsg '+(qb.length?'ok':'')+'"><b>Quote:</b> '+(qb.length?esc(qb.join(' · '))+'. '+esc(SHORT)+' can tell you how it compares.':'We couldn’t read the numbers from this one. Type the size and price below.')+'</p>'}
+ var qs=(u.quotes||[]).filter(function(q){return q&&(q.kw||q.price)});if((u.quotes||[]).length>qs.length)h+='<p class="upmsg">We couldn’t read the numbers from one of your quotes. Type the size and price below.</p>';
+ if(qs.length)h+=quoteTable(qs);
  if(u.err)h+='<p class="upmsg bad">'+esc(u.err)+'</p>';
  return h}
 var pdfP=null,PDFJS=C.pdfjsBase||'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
@@ -526,22 +570,29 @@ function pdfText(file){if(!file||file.size>10*1024*1024||!(/\.pdf$/i.test(file.n
   return Promise.all(ps).then(function(cs){return cs.map(function(c){var lines={};c.items.forEach(function(it){if(!it.str)return;var y=Math.round((it.transform?it.transform[5]:0)/3)*3;(lines[y]=lines[y]||[]).push({x:it.transform?it.transform[4]:0,s:it.str})});
    return Object.keys(lines).map(Number).sort(function(a,b){return b-a}).map(function(y){return lines[y].sort(function(a,b){return a.x-b.x}).map(function(v){return v.s}).join(' ')}).join('\n')}).join('\n')})})}
 document.addEventListener('input',function(e){var m=/^(mb|mq)_(\w+)$/.exec(e.target.id||'');if(!m)return;var o=S.up[m[1]]=S.up[m[1]]||{};o[m[2]]=e.target.value.replace(/[^\d.]/g,'')});
-document.addEventListener('change',function(e){var id=e.target.id;if(id!=='up_bill'&&id!=='up_quote')return;var file=e.target.files&&e.target.files[0],k=id==='up_bill'?'bill':'quote';if(!file)return;
+document.addEventListener('change',function(e){var id=e.target.id;
+ if(id==='up_bill_q'){var fq=e.target.files&&e.target.files[0];if(!fq)return;S.up.billFail=false;
+  if(/^image\//.test(fq.type)||/\.(jpe?g|png|heic|heif|webp)$/i.test(fq.name)){S.up.billPhoto=true;S.usageOpen=true;track('upload',{kind:'bill-photo',where:'question'});renderQ();return}
+  S.up.billBusy=true;renderQ();
+  pdfText(fq).then(function(txt){S.up.billBusy=false;var b=window.SLFBill?window.SLFBill.parse(txt):{};
+   if(b.dailyKwh&&b.dailyKwh<200){b.where='question';S.up.bill=b;S.a.kwh=String(b.dailyKwh);if(b.monthlyCostAud){var m=b.monthlyCostAud;S.a.bill=m<150?'u150':m<250?'150-250':m<350?'250-350':m<500?'350-500':'o500'}save()}else{S.up.billFail=true;S.usageOpen=true}
+   track('upload',{kind:'bill',where:'question'});renderQ()}).catch(function(){S.up.billBusy=false;S.up.billFail=true;S.usageOpen=true;renderQ()});return}
+ if(id!=='up_bill'&&id!=='up_quote')return;var file=e.target.files&&e.target.files[0],k=id==='up_bill'?'bill':'quote';if(!file)return;
  S.up.err='';
  if(/^image\//.test(file.type)||/\.(jpe?g|png|heic|heif|webp)$/i.test(file.name)){S.up[k+'Photo']=true;S.up[k==='bill'?'manBill':'manQuote']=true;track('upload',{kind:k+'-photo'});renderR();return}
  S.up[k+'Busy']=true;$('#upOut').innerHTML=upSummary();height();
  pdfText(file).then(function(txt){S.up[k+'Busy']=false;
   if(k==='bill'){var b=window.SLFBill?window.SLFBill.parse(txt):{};S.up.bill=b;if(b.dailyKwh&&b.dailyKwh<200){S.a.kwh=String(b.dailyKwh)}else S.up.manBill=true}
-  else{var q=window.SLFQuote?window.SLFQuote.parse(txt):{};S.up.quote=(q&&q.fields)||{};if(!S.up.quote.kw&&!S.up.quote.price)S.up.manQuote=true}
+  else{var q=window.SLFQuote?window.SLFQuote.parse(txt):{},qf=(q&&q.fields)||{};S.up.quotes=(S.up.quotes||[]).concat([qf]).slice(-3);S.up.quote=S.up.quotes[0];if(!qf.kw&&!qf.price)S.up.manQuote=true}
   track('upload',{kind:k});renderR()}).catch(function(err){S.up[k+'Busy']=false;S.up.err=(err.message||'We couldn’t read that file.')+' You can type the numbers below instead.';S.up[k==='bill'?'manBill':'manQuote']=true;renderR()})});
 function applyManual(){var u=S.up,mb=u.mb||{},mq=u.mq||{},d=parseFloat(mb.daily),t=parseFloat(mb.total),n=parseFloat(mb.days);
  if(d>0||t>0){var pb=u.bill&&u.bill.dailyKwh?u.bill:null;if(!pb){u.bill={dailyKwh:d>0&&d<200?d:null,billTotalAud:t>0?t:null,days:n>0?n:null,monthlyCostAud:t>0&&n>0?Math.round(t*30.4375/n):null,entry:'typed'};if(u.bill.dailyKwh)S.a.kwh=String(u.bill.dailyKwh)}}
  var k=parseFloat(mq.kw),pr=parseFloat(mq.price),bt=parseFloat(mq.batt);
- if((k>0||pr>0)&&!(u.quote&&(u.quote.kw||u.quote.price)))u.quote={kw:k>0?k:null,price:pr>0?pr:null,batteryKwh:bt>0?bt:null,entry:'typed'}}
+ if(k>0||pr>0){var tq={kw:k>0?k:null,price:pr>0?pr:null,batteryKwh:bt>0?bt:null,entry:'typed'};u.quotes=(u.quotes||[]).filter(function(q){return q.entry!=='typed'&&(q.kw||q.price)}).concat([tq]).slice(-3);u.quote=u.quotes[0]}}
 
-function renderR(){var R=calc(),V=verdict(R),f=findings(R,V),h='<span class="eyebrow">Your result</span><h2 class="rh">'+esc(headline(R,V))+'</h2><p class="rsub">'+(S.flow==='savings'?'Likely range '+money(R.lo)+'–'+money(R.hi)+' a year, off your power bill. ':'')+'Here’s what we found for your home'+(/^\d{4}$/.test(S.a.postcode||'')?' in '+esc(S.a.postcode):'')+', based on your answers.</p>';
+function renderR(){var R=calc(),V=verdict(R),h='<span class="eyebrow">Your result</span><h2 class="rh">'+esc(headline(R,V))+'</h2><p class="rsub">'+(S.flow==='savings'?'Likely range '+money(R.lo)+'–'+money(R.hi)+' a year, off your power bill. ':'')+'Here’s what we found for your home'+(/^\d{4}$/.test(S.a.postcode||'')?' in '+esc(S.a.postcode):'')+', based on your answers.</p>';
  if(S.unlocked)h='<div class="thanks" style="margin:0 0 18px">'+(S.welcomeBack?'Welcome back. Your full report is below.':'Thanks, '+esc(S.first)+'. Your full report is on its way to '+esc(S.email)+'. '+esc(NAME)+' will be in touch — '+esc(C.replyTime||'usually within one business day')+'.')+'</div>'+h;
- h+=statsHtml(R)+working(R);if(f.length)h+='<div class="finds"><p>What we found</p><ul>'+f.map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul></div>';
+ h+=statsHtml(R)+working(R)+checksHtml(R);
  if(S.flow!=='fit')h+='<p class="more">Want the full home check? <button type="button" class="link" id="full" style="margin:0">'+fullLeft()+' more questions →</button></p>';
  if(!S.unlocked)h+=gateHtml(R);
  else{h+=reportHtml(R)+(S.welcomeBack?'':extrasHtml())}
@@ -553,7 +604,7 @@ function working(R){var a=S.a,u=Math.round(R.kwh),t;
  if(R.src==='bill')t='Your bill of about '+money(R.bill)+' a month, less the daily supply charge, at about '+BUY+'c a unit ≈ '+u+' units a day.';
  else if(R.src==='usage')t='You told us you use '+u+' units a day.';
  else t='A typical South Australian home'+(a.people?' with '+LABEL('people',a.people)+(a.people==='1'?' person':' people'):'')+' uses about '+u+' units a day.';
- if(a.solar!=='both'&&!(S.flow==='battery'&&a.interest==='battery'))t+=' Each 1 kW of panels makes about '+(Math.round(YIELD*(SHADE[a.roof]||.9)*10)/10)+' units a day on '+(a.roof==='sunny'?'a sunny':a.roof==='partly'?'a partly shaded':a.roof==='shaded'?'a shaded':'an average')+' roof, so '+(S.flow==='battery'?'your panels':R.kw+' kW')+' covers your daytime use with some to spare. Savings = power you use yourself ('+BUY+'c a unit) + power you sell back ('+FIT+'c).';
+ if(a.solar!=='both'&&!(S.flow==='battery'&&a.interest==='battery'))t+=' Each 1 kW of panels makes about '+(Math.round(R.eff*10)/10)+' units a day on '+(a.roof==='sunny'?'a sunny':a.roof==='partly'?'a partly shaded':a.roof==='shaded'?'a shaded':'an average')+(a.dir&&a.dir!=='notsure'?', '+LABEL('dir',a.dir).toLowerCase()+'-facing':'')+' roof, so '+(S.flow==='battery'?'your panels':R.kw+' kW')+' covers your daytime use'+(R.loads.length?' and your future plans':'')+' with some to spare. Savings = power you use yourself ('+BUY+'c a unit) + power you sell back ('+FIT+'c).';
  return '<details class="work"><summary>How we worked this out</summary><p>'+esc(t)+'</p></details>'}
 function render(){if(S.view==='r')renderR();else renderQ()}
 
@@ -566,9 +617,13 @@ function callTip(R,V){var a=S.a,t=[];
  if(a.own==='rent'||a.own==='strata')t.push('they '+(a.own==='rent'?'rent':'are in strata')+', so ask about the owner’s or strata’s OK first');
  if(a.solar==='panels')t.push('they already have panels, so ask the system age and inverter');
  if(a.solar==='both')t.push('they have panels and a battery, so offer a check-up');
- if(a.roof==='partly'||a.roof==='notsure')t.push('confirm roof shade and direction on the call');
+ if(a.roof==='partly'||a.roof==='notsure'||a.dir==='notsure')t.push('confirm roof shade and direction on the call');
+ if(has(a.changes,'ev'))t.push('EV '+(a.evday==='yes'?'home in the day, so talk solar charging':'charged at night, so a battery fits'));
+ if(a.bpri==='backup')t.push('wants blackout backup, so quote a battery with backup');
+ if((S.up.quotes||[]).length)t.push('has '+(S.up.quotes.length>1?S.up.quotes.length+' quotes':'a quote')+' already, so compare on value');
+ if(a.dir==='south')t.push('south-facing roof, so check the layout');
  if(a.bill==='350-500'||a.bill==='o500')t.push('big bill, so there’s a strong savings story');
- var s=t.slice(0,3).join('; ');return s?s.charAt(0).toUpperCase()+s.slice(1)+'.':''}
+ var s=t.slice(0,4).join('; ');return s?s.charAt(0).toUpperCase()+s.slice(1)+'.':''}
 function temp(){var t=S.a.timing,o=S.a.own;if(t==='3m'&&o!=='rent')return 'hot';if(t==='3m'||t==='6m')return 'warm';return 'nurture'}
 function b64(o){return btoa(unescape(encodeURIComponent(JSON.stringify(o)))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'')}
 function link(){var base=C.resultsBaseUrl||location.href.split('#')[0];return base+'#try='+S.flow+'&q='+b64({f:S.flow,a:S.a})}
@@ -579,8 +634,8 @@ function payload(f,event){var R=calc(),V=verdict(R),a=S.a,p=new URLSearchParams(
  set('postcode',a.postcode);set('state',stateOf(a.postcode));
  set('q1_ownership',LABEL('own',a.own));set('q2_people',LABEL('people',a.people));set('q3_postcode',a.postcode);set('q4_monthly_bill',LABEL('bill',a.bill));
  set('q5_home_during_day',LABEL('home',a.home));set('q6_existing_solar',LABEL('solar',a.solar));set('q7_roof_sun',LABEL('roof',a.roof));
- set('q8_interested_in',LABEL('interest',a.interest));set('q9_timeframe',LABEL('timing',a.timing));set('q10_priority',LABEL('priority',a.priority));
- set('ev',LABEL('ev',a.ev));set('quotes_so_far',LABEL('quotes',a.quotes));set('known_kwh_day',a.kwh||'');var ub=S.up.bill||{},uq=S.up.quote||{};set('bill_uploaded',S.up.bill?(ub.entry==='typed'?'typed':'pdf'):(S.up.billPhoto?'photo-not-read':''));set('bill_total',ub.billTotalAud);set('bill_days',ub.days);set('bill_daily_kwh',ub.dailyKwh);set('bill_tariff_c',ub.tariffCents);set('bill_monthly_cost',ub.monthlyCostAud);set('quote_uploaded',S.up.quote?(uq.entry==='typed'?'typed':'pdf'):(S.up.quotePhoto?'photo-not-read':''));set('quote_kw',uq.kw);set('quote_battery_kwh',uq.batteryKwh);set('quote_price',uq.price);set('quote_price_basis',uq.priceBasis);set('quote_brands',uq.brands);set('winter_vs_summer',a.season||'');
+ set('q8_interested_in',LABEL('interest',a.interest));set('q9_timeframe',LABEL('timing',a.timing));set('q10_priority',a.bpri?LABEL('bpri',a.bpri):LABEL('priority',a.priority));set('future_changes',LABEL('changes',a.changes));set('ev_daytime',LABEL('evday',a.evday));set('roof_direction',LABEL('dir',a.dir));set('existing_system_size',LABEL('syssize',a.syssize));set('bill_now_month',money(R.billNow));set('bill_after_month',money(R.billAfter));
+ set('ev',has(a.changes,'ev')?'Yes'+(a.evday?' — '+LABEL('evday',a.evday):''):'No');set('quotes_so_far',LABEL('quotes',a.quotes));set('known_kwh_day',a.kwh||'');var ub=S.up.bill||{},uq=S.up.quote||{};set('bill_uploaded',S.up.bill?(ub.entry==='typed'?'typed':ub.where==='question'?'pdf-before-gate':'pdf'):(S.up.billPhoto?'photo-not-read':''));set('bill_total',ub.billTotalAud);set('bill_days',ub.days);set('bill_daily_kwh',ub.dailyKwh);set('bill_tariff_c',ub.tariffCents);set('bill_monthly_cost',ub.monthlyCostAud);set('quote_uploaded',S.up.quote?(uq.entry==='typed'?'typed':'pdf'):(S.up.quotePhoto?'photo-not-read':''));set('quote_kw',uq.kw);set('quote_battery_kwh',uq.batteryKwh);set('quote_price',uq.price);set('quote_price_basis',uq.priceBasis);set('quote_brands',uq.brands);(S.up.quotes||[]).forEach(function(q,i){var x='quote_'+'abc'[i]+'_';set(x+'kw',q.kw);set(x+'price',q.price);set(x+'battery_kwh',q.batteryKwh);set(x+'brands',q.brands);set(x+'check',quoteVerdict(q))});set('winter_vs_summer',a.season||'');
  set('interested_in',LABEL('interest',a.interest));set('ready_in',LABEL('timing',a.timing));set('timeframe',a.timing);set('route',rt);
  set('household',LABEL('people',a.people));set('existing_solar',a.solar);set('battery_interest',rt==='solar'?'no':'yes');
  set('result_fit',V.label);set('verdict',V.h);set('verdict_level',V.level);
@@ -588,11 +643,11 @@ function payload(f,event){var R=calc(),V=verdict(R),a=S.a,p=new URLSearchParams(
  set('savings_year',money(R.save));set('savings_range',money(R.lo)+'–'+money(R.hi)+' a year');set('payback_years',R.payback||'');
  set('battery_size',rt!=='solar'?R.batt+' kWh':'');set('battery_rebate_now',R.reb.now?money(R.reb.now):'');set('battery_rebate_after',R.reb.after?money(R.reb.after):'');
  set('call_tip',callTip(R,V));set('lead_temperature',temp());
- var tags=['solar-quick','tool-'+S.flow,'route-'+rt,'timeframe-'+(a.timing||'unknown'),'fit-'+V.level,'temp-'+temp()];if(a.solar&&a.solar!=='no')tags.push('has-solar');var st=stateOf(a.postcode);if(st)tags.push('state-'+st.toLowerCase());if(event==='lead_update')tags.push('report-extras');if(S.up.bill||S.up.billPhoto)tags.push('bill-shared');if(S.up.quote||S.up.quotePhoto)tags.push('has-quote');
+ var tags=['solar-quick','tool-'+S.flow,'route-'+rt,'timeframe-'+(a.timing||'unknown'),'fit-'+V.level,'temp-'+temp()];if(a.solar&&a.solar!=='no')tags.push('has-solar');var st=stateOf(a.postcode);if(st)tags.push('state-'+st.toLowerCase());if(event==='lead_update')tags.push('report-extras');if(S.up.bill||S.up.billPhoto)tags.push('bill-shared');if(S.up.quote||S.up.quotePhoto)tags.push('has-quote');if((S.up.quotes||[]).length>1)tags.push('comparing-quotes');if(has(a.changes,'ev'))tags.push('plans-ev');if(has(a.changes,'pool'))tags.push('plans-pool');if(has(a.changes,'gas'))tags.push('plans-gas-to-electric');if(a.bpri==='backup')tags.push('wants-backup');
  if(C.id&&!DEMO)tags.push('installer-'+C.id);set('tags',tags.join(','));
  var head=headline(R,V),L=link();set('result_title',head);set('headline_figure',S.flow==='battery'?R.batt+' kWh':money(R.save)+' a year');
  set('results_link',L);set('results_url',L);
- var txt=[head,'Uses about '+Math.round(R.kwh)+' units (kWh) a day','Suggested system: '+R.kw+' kW, saving about '+money(R.lo)+'–'+money(R.hi)+' a year'+(R.payback?', payback about '+R.payback+' years':'')].concat(rt!=='solar'?['Battery: '+R.batt+' kWh'+(R.reb.now?', rebate about '+money(R.reb.now)+(R.reb.before?' before '+R.reb.date:''):'')]:[]).concat(findings(R,V)).join('\n');
+ var txt=[head,'Uses about '+Math.round(R.kwh)+' units (kWh) a day','Suggested system: '+R.kw+' kW, saving about '+money(R.lo)+'–'+money(R.hi)+' a year'+(R.payback?', payback about '+R.payback+' years':'')].concat(rt!=='solar'?['Battery: '+R.batt+' kWh'+(R.reb.now?', rebate about '+money(R.reb.now)+(R.reb.before?' before '+R.reb.date:''):'')]:[]).concat(findings(R)).join('\n');
  set('report_text',txt);set('report_summary',txt);set('demo',DEMO?'installer-demo':'');
  return p}
 function send(p){if(!C.webhookUrl)return Promise.resolve(false);return fetch(C.webhookUrl,{method:'POST',mode:'no-cors',body:p,keepalive:true}).then(function(){return true})}
@@ -603,6 +658,9 @@ document.addEventListener('click',function(e){var t=e.target.closest('button');i
   if(S.view==='r'){[].forEach.call(document.querySelectorAll('.opt[data-id="'+id+'"]'),function(b){b.classList.toggle('on',b===t)});return}
   var y=window.scrollY;renderQ();window.scrollTo(0,y);
   var sc=screens();if(mobile()&&id!=='season'&&!(id==='bill'&&S.usageOpen)&&sc[S.i]&&sc[S.i].q.length===1&&S.i<sc.length-1)setTimeout(next,260);return}
+ if(t.dataset.multi){var mid=t.dataset.multi,v=t.dataset.v,cur=(S.a[mid]||'').split(',').filter(Boolean);
+  if(v==='none')cur=has(S.a[mid],'none')?[]:['none'];else{cur=cur.filter(function(x){return x!=='none'});cur=cur.indexOf(v)>-1?cur.filter(function(x){return x!==v}):cur.concat([v])}
+  S.a[mid]=cur.join(',');save();var y2=window.scrollY;renderQ();window.scrollTo(0,y2);return}
  if(t.dataset.man){S.up[t.dataset.man]=!S.up[t.dataset.man];renderR();return}
  if(t.dataset.skip){S.a[t.dataset.skip]='';next();return}
  switch(t.id){
@@ -639,6 +697,10 @@ render();
 </script>
 </template>
 
+
+
+
+
 <script>
 (function () {
   /* ---- Settings (Steve) ---- */
@@ -659,9 +721,9 @@ render();
     battery: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="16" height="10" rx="2"/><path d="M21 10.5v3"/><path d="M11.5 9l-2 3.2h3l-2 3.3"/></svg>'
   };
   var TOOLS = [
-    { key: 'fit', tag: 'Solar check', title: 'Is solar right for my home?', who: 'Just starting to look?', desc: 'Checks your home, bill and roof in 3 quick steps.', time: 'About 1 min', mini: '<span class="slw-mk">Your result</span><span class="slw-pill">✓ Good fit for solar</span><span class="slw-mv">8 kW suits you</span><span class="slw-ms">Home, bill and roof checked</span>' },
-    { key: 'savings', tag: 'Savings', title: 'How much could I save?', who: 'Weighing up the cost?', desc: 'Your yearly saving, the right system size and payback.', time: 'About 30 sec', mini: '<span class="slw-mk">Estimated saving</span><span class="slw-mv">$1,450 a year</span><span class="slw-ms">Payback in about 5½ years</span><span class="slw-bars"><i style="height:90%"></i><i style="height:60%"></i><i style="height:40%"></i><i style="height:80%"></i></span>' },
-    { key: 'battery', tag: 'Battery', title: 'Is a battery worth it?', who: 'Thinking about a battery?', desc: 'Whether a battery suits you, what size, and the rebate.', time: 'About 30 sec', mini: '<span class="slw-mk">Your verdict</span><span class="slw-mv">13.5 kWh suits you</span><span class="slw-batt"><b></b><span>Worth it</span></span>' }
+    { key: 'fit', tag: 'Solar check', title: 'Is solar right for my home?', who: 'Just starting to look?', desc: 'Checks your home, power use, roof and plans in 3 quick steps.', time: 'About 90 sec', mini: '<span class="slw-mk">Your result</span><span class="slw-pill">✓ Good fit for solar</span><span class="slw-mv">8 kW suits you</span><span class="slw-ms">Home, bill and roof checked</span>' },
+    { key: 'savings', tag: 'Savings', title: 'How much could I save?', who: 'Weighing up the cost?', desc: 'Your yearly saving, the right system size and payback.', time: 'About 45 sec', mini: '<span class="slw-mk">Estimated saving</span><span class="slw-mv">$1,450 a year</span><span class="slw-ms">Payback in about 5½ years</span><span class="slw-bars"><i style="height:90%"></i><i style="height:60%"></i><i style="height:40%"></i><i style="height:80%"></i></span>' },
+    { key: 'battery', tag: 'Battery', title: 'Is a battery worth it?', who: 'Thinking about a battery?', desc: 'Whether a battery suits you, what size, and the rebate.', time: 'About 45 sec', mini: '<span class="slw-mk">Your verdict</span><span class="slw-mv">13.5 kWh suits you</span><span class="slw-batt"><b></b><span>Worth it</span></span>' }
   ];
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   function qs(name) { var m = location.search.match(new RegExp('[?&]' + name + '=([^&#]*)')); return m ? decodeURIComponent(m[1].replace(/\+/g, ' ')) : ''; }
@@ -721,7 +783,7 @@ render();
 
     function cards() {
       frame = null;
-      root.innerHTML = '<div class="slw-head"><span class="slw-eb">Free from ' + esc(short) + '</span><h2>See what solar could do for your home</h2><p>Pick a quick check. Answers in under a minute, no sign-up to start.</p></div><div class="slw-cards">' +
+      root.innerHTML = '<div class="slw-head"><span class="slw-eb">Free from ' + esc(short) + '</span><h2>See what solar could do for your home</h2><p>Pick a quick check. Answers in a minute or two, no sign-up to start.</p></div><div class="slw-cards">' +
         TOOLS.map(function (t, i) { return '<button type="button" class="slw-card" data-i="' + i + '"><span class="slw-prev"><span class="slw-tag">' + ICO[t.key] + t.tag + '</span><span class="slw-num">0' + (i + 1) + '</span><span class="slw-mini">' + t.mini + '</span></span><span class="slw-body"><h3>' + t.title + '</h3><p class="slw-for">' + t.who + '</p><p class="slw-desc">' + t.desc + '</p><span class="slw-meta"><span>⏱ ' + t.time + '</span><span>✓ No sign-up</span></span></span><span class="slw-go">Start →</span></button>'; }).join('') +
         '</div><p class="slw-by">SLS</p>';
       [].forEach.call(root.querySelectorAll('.slw-card'), function (b) { b.addEventListener('click', function () { open(+b.getAttribute('data-i')); toParents({ type: 'slw-scroll', top: 0 }); }); });
