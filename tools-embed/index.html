@@ -321,16 +321,18 @@ var Q={
  dir:{h:'Which way does most of your roof face?',help:'Not sure is fine. Your installer checks this on site.',o:[['north','North'],['eastwest','East or west'],['south','South'],['notsure','Not sure']]},
  syssize:{h:'How big is your solar system?',help:'It’s on your inverter or old quote. Not sure is fine.',o:[['u5','Under 5 kW'],['5-8','5–8 kW'],['o8','Over 8 kW'],['notsure','Not sure']],when:function(a){return a.solar==='panels'||a.solar==='both'}},
  bpri:{h:'What matters most to you?',o:[['bills','Lower power bills'],['backup','Backup when the power goes out'],['payback','Fastest payback'],['notsure','Not sure yet']]},
- roof:{h:'Is your roof mostly sunny?',help:'Think about trees, buildings or other roofs shading it.',o:[['sunny','Mostly sunny'],['partly','Partly shaded'],['shaded','Mostly shaded'],['notsure','Not sure']]},
+ roof:{h:'How much sun does your roof get?',help:'Think about trees, buildings or other roofs shading it.',o:[['sunny','Lots of sun'],['partly','Some shade'],['shaded','Lots of shade']]},
+ storeys:{h:'How many storeys is your home?',help:'Your installer needs this to plan the install.',o:[['1','Single storey'],['2','Two storeys'],['3','Three or more']],when:function(a){return a.solar!=='both'}},
+ rooftype:{h:'What is your roof made of?',o:[['tin','Tin or Colorbond'],['tile','Tiles'],['flat','Flat roof'],['notsure','Not sure']],when:function(a){return a.solar!=='both'}},
  interest:{h:'What are you interested in?',o:[['solar','Solar only'],['both','Solar + battery'],['battery','Battery only'],['notsure','Not sure yet']]},
- timing:{h:'When are you hoping to get it done?',o:[['3m','Within 3 months'],['6m','In 3–6 months'],['12m','In 6–12 months'],['research','Just researching for now']]},
+ timing:{h:'How soon are you hoping to install?',o:[['3m','Within 3 months'],['6m','In 3–6 months'],['12m','In 6–12 months'],['research','Just researching for now']]},
  postcode:{h:'What’s your postcode?',help:'So we can check your area and your rebate.',text:true},
  priority:{h:'Which matters most to you?',o:[['bills','Lower power bills'],['payback','Fastest payback'],['backup','Battery backup when the power goes out'],['notsure','Not sure yet']],optional:true},
  quotes:{h:'Have you had any solar quotes yet?',o:[['none','Not yet'],['one','Yes, one'],['two','Yes, two or more']]}
 };
 var FLOWS={
- fit:{title:'Is solar right for my home?',time:'about 90 seconds',secs:90,steps:[{t:'Your home',q:['own','solar','changes']},{t:'Your power',q:['bill','people','home','evday']},{t:'Your roof and plans',q:['roof','dir','interest','timing','postcode']}]},
- savings:{title:'How much could I save with solar?',time:'about 45 seconds',secs:45,steps:[{t:'Your power',q:['bill','people','home','changes','evday']},{t:'Your roof and timing',q:['roof','dir','timing']}]},
+ fit:{title:'Is solar right for my home?',time:'about 90 seconds',secs:90,steps:[{t:'Your home',q:['own','solar','changes']},{t:'Your power',q:['bill','people','home','evday']},{t:'Your roof and plans',q:['roof','storeys','rooftype','interest','timing','postcode']}]},
+ savings:{title:'How much could I save with solar?',time:'about 45 seconds',secs:45,steps:[{t:'Your power',q:['bill','people','home','changes','evday']},{t:'Your roof and timing',q:['roof','storeys','rooftype','timing']}]},
  battery:{title:'Is a battery worth it?',time:'about 45 seconds',secs:45,steps:[{t:'Your solar',q:['solar','syssize','bpri']},{t:'Your power',q:['bill','people','home','timing']}]}
 };
 function has(v,k){return (','+(v||'')+',').indexOf(','+k+',')>-1}
@@ -373,7 +375,7 @@ function calc(){var a=S.a,src,kwh,known=parseFloat(a.kwh);
  if(known>0&&known<200){kwh=known;src='usage'}
  else if(BILL[a.bill]){kwh=Math.max(4,(BILL[a.bill]*12/365-SUP)/(BUY/100));src='bill'}
  else{var avg=C.saAverageKwhDay||{};kwh=+(avg[a.people]||avg['default']||14);src=a.people?'average-size':'average'}
- var ds=DAY[a.home]||.4,eff=YIELD*(SHADE[a.roof]||.9)*(DIRF[a.dir]||.9);
+ var ds=DAY[a.home]||.4,eff=YIELD*(SHADE[a.roof]||.9)*(a.dir?(DIRF[a.dir]||.9):1);
  /* Future loads (EV, pool, gas to electric, more people): sized for, but savings are counted on today's use only */
  var loads=[],extra=0,extraDay=0,sizeAdd=0;
  ['ev','pool','gas'].forEach(function(k){if(has(a.changes,k)){var sh=k==='ev'?(EVDAY[a.evday]||.35):k==='pool'?.8:.5;loads.push(k);extra+=LOAD[k];extraDay+=LOAD[k]*sh;sizeAdd+=LOAD[k]*clamp(.3+sh,.4,1)}});
@@ -617,7 +619,7 @@ function callTip(R,V){var a=S.a,t=[];
  if(a.own==='rent'||a.own==='strata')t.push('they '+(a.own==='rent'?'rent':'are in strata')+', so ask about the owner’s or strata’s OK first');
  if(a.solar==='panels')t.push('they already have panels, so ask the system age and inverter');
  if(a.solar==='both')t.push('they have panels and a battery, so offer a check-up');
- if(a.roof==='partly'||a.roof==='notsure'||a.dir==='notsure')t.push('confirm roof shade and direction on the call');
+ if(a.roof==='partly'||a.roof==='shaded')t.push('confirm roof shade on the call');if(a.storeys==='2'||a.storeys==='3'||a.rooftype==='tile'||a.rooftype==='flat')t.push((a.storeys==='2'||a.storeys==='3'?(a.storeys==='3'?'three':'two')+'-storey':'')+((a.storeys==='2'||a.storeys==='3')&&(a.rooftype==='tile'||a.rooftype==='flat')?', ':'')+(a.rooftype==='tile'?'tiled roof':a.rooftype==='flat'?'flat roof (tilt frames)':'')+', so allow for it in the quote');
  if(has(a.changes,'ev'))t.push('EV '+(a.evday==='yes'?'home in the day, so talk solar charging':'charged at night, so a battery fits'));
  if(a.bpri==='backup')t.push('wants blackout backup, so quote a battery with backup');
  if((S.up.quotes||[]).length)t.push('has '+(S.up.quotes.length>1?S.up.quotes.length+' quotes':'a quote')+' already, so compare on value');
@@ -633,7 +635,7 @@ function payload(f,event){var R=calc(),V=verdict(R),a=S.a,p=new URLSearchParams(
  set('first_name',f.first);set('email',f.email);set('phone',f.phone);set('consent_contact','yes');
  set('postcode',a.postcode);set('state',stateOf(a.postcode));
  set('q1_ownership',LABEL('own',a.own));set('q2_people',LABEL('people',a.people));set('q3_postcode',a.postcode);set('q4_monthly_bill',LABEL('bill',a.bill));
- set('q5_home_during_day',LABEL('home',a.home));set('q6_existing_solar',LABEL('solar',a.solar));set('q7_roof_sun',LABEL('roof',a.roof));
+ set('q5_home_during_day',LABEL('home',a.home));set('q6_existing_solar',LABEL('solar',a.solar));set('q7_roof_sun',LABEL('roof',a.roof));set('storeys',LABEL('storeys',a.storeys));set('roof_type',LABEL('rooftype',a.rooftype));
  set('q8_interested_in',LABEL('interest',a.interest));set('q9_timeframe',LABEL('timing',a.timing));set('q10_priority',a.bpri?LABEL('bpri',a.bpri):LABEL('priority',a.priority));set('future_changes',LABEL('changes',a.changes));set('ev_daytime',LABEL('evday',a.evday));set('roof_direction',LABEL('dir',a.dir));set('existing_system_size',LABEL('syssize',a.syssize));set('bill_now_month',money(R.billNow));set('bill_after_month',money(R.billAfter));
  set('ev',has(a.changes,'ev')?'Yes'+(a.evday?' — '+LABEL('evday',a.evday):''):'No');set('quotes_so_far',LABEL('quotes',a.quotes));set('known_kwh_day',a.kwh||'');var ub=S.up.bill||{},uq=S.up.quote||{};set('bill_uploaded',S.up.bill?(ub.entry==='typed'?'typed':ub.where==='question'?'pdf-before-gate':'pdf'):(S.up.billPhoto?'photo-not-read':''));set('bill_total',ub.billTotalAud);set('bill_days',ub.days);set('bill_daily_kwh',ub.dailyKwh);set('bill_tariff_c',ub.tariffCents);set('bill_monthly_cost',ub.monthlyCostAud);set('quote_uploaded',S.up.quote?(uq.entry==='typed'?'typed':'pdf'):(S.up.quotePhoto?'photo-not-read':''));set('quote_kw',uq.kw);set('quote_battery_kwh',uq.batteryKwh);set('quote_price',uq.price);set('quote_price_basis',uq.priceBasis);set('quote_brands',uq.brands);(S.up.quotes||[]).forEach(function(q,i){var x='quote_'+'abc'[i]+'_';set(x+'kw',q.kw);set(x+'price',q.price);set(x+'battery_kwh',q.batteryKwh);set(x+'brands',q.brands);set(x+'check',quoteVerdict(q))});set('winter_vs_summer',a.season||'');
  set('interested_in',LABEL('interest',a.interest));set('ready_in',LABEL('timing',a.timing));set('timeframe',a.timing);set('route',rt);
@@ -696,6 +698,7 @@ render();
 })();
 </script>
 </template>
+
 
 
 
