@@ -685,6 +685,8 @@ render();
 
   /* ---- Look the client up in the Google Sheet ---- */
   if (!clientId) { off(null); return; }
+  /* Demo for Social Ladder's own landing page: no sheet lookup, example branding, leads flagged installer-demo */
+  if (clientId === 'demo') { start({ __demo: true, business_name: 'Your Solar Co', short_name: 'Your Solar Co', brand_colour: '#14532d', accent_colour: '#22a35a', style: 'clean', phone: '0468 181 555', privacy_url: 'https://solar.socialladder.com.au/privacy-policy' }); return; }
   var done = false;
   var timer = setTimeout(function () { if (!done) { done = true; off(null); } }, 9000);
   window.__slwSheet = function (resp) {
@@ -712,7 +714,7 @@ render();
     root.style.setProperty('--fh', '"' + st.fontHead + '",system-ui,sans-serif'); root.style.setProperty('--fb', '"' + st.fontBody + '",system-ui,sans-serif');
     var fl = document.createElement('link'); fl.rel = 'stylesheet'; fl.href = 'https://fonts.googleapis.com/css2?family=' + st.fonts + '&display=swap'; document.head.appendChild(fl);
     var base = /^https?:\/\//.test(parentPage) ? parentPage : location.href.split('#')[0];
-    var cfg = { id: clientId, demo: false, name: name, shortName: short, brandColor: brand, accent: accent, theme: st.theme, fontHead: st.fontHead, fontBody: st.fontBody,
+    var cfg = { id: clientId, demo: !!c.__demo, demoFollowUp: 'Steve from Social Ladder', name: name, shortName: short, brandColor: brand, accent: accent, theme: st.theme, fontHead: st.fontHead, fontBody: st.fontBody,
       phone: String(c.phone || ''), privacyUrl: String(c.privacy_url || '').trim() || DEFAULT_PRIVACY, webhookUrl: LEAD_HOOK, resultsBaseUrl: base, poweredBy: 'SLS' };
     var tpl = document.getElementById('slq-tpl');
     var frame = null, restoreQ = null;
